@@ -169,6 +169,8 @@ class ProblemAccess(Resource):
                         "id": problem.id,
                         "name": problem.name,
                         "problem_type": problem.problem_type,
+                        "n_variables": problem.n_variables,
+                        "n_objectives": problem.problem_pickle.n_of_objectives,
                     }
                     for problem in problems
                 ]
@@ -433,6 +435,8 @@ class ProblemCreation(Resource):
                     problem_pickle=problem,
                     user_id=current_user_id,
                     minimize=json.dumps(minimize),
+                    n_variables=len(data["variable_names"]),
+                    n_objectives=len(data["objective_functions"]),
                 )
             )
             db.session.commit()
@@ -566,6 +570,8 @@ class ProblemCreation(Resource):
                     problem_pickle=problem,
                     user_id=current_user_id,
                     minimize=json.dumps(minimize),
+                    n_variables=len(data["variable_names"]),
+                    n_objectives=len(data["objective_functions"]),
                 )
             )
             db.session.commit()

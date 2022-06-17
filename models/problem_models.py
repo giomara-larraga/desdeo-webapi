@@ -14,6 +14,10 @@ class Problem(db.Model):
     problem_pickle = db.Column(db.PickleType(pickler=dill))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     minimize = db.Column(db.String(120), nullable=False)
+    n_variables = db.Column(db.Integer)
+    n_objectives = db.Column(db.Integer)
+    constraints =  db.Column(db.Integer)
+
 
     def __repr__(self):
         return f"Problem('{self.name}', '{self.problem_type}', '{self.owner}', '{self.minimize}'')"
