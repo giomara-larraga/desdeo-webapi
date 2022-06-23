@@ -571,7 +571,7 @@ class ProblemCreation(Resource):
                     user_id=current_user_id,
                     minimize=json.dumps(minimize),
                     n_variables=len(data["variable_names"]),
-                    n_objectives=len(data["objective_functions"]),
+                    n_objectives=len(data["objective_names"]),
                 )
             )
             db.session.commit()

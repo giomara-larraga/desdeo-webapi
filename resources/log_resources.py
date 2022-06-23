@@ -25,6 +25,18 @@ log_entry_parser.add_argument(
     help="Info associated with the log entry.",
     required=True,
 )
+log_entry_parser.add_argument(
+    "decision_variables",
+    type=str,
+    help="Info associated with the log entry.",
+    required=False,
+)
+log_entry_parser.add_argument(
+    "objective_values",
+    type=str,
+    help="Info associated with the log entry.",
+    required=False,
+)
 
 
 class LogEntryResource(Resource):
@@ -38,6 +50,8 @@ class LogEntryResource(Resource):
         log_entry_type = data["entry_type"]
         log_data = data["data"]
         log_info = data["info"]
+        log_decision_variables = data["decision_variables"]
+        log_objective_values = data["objective_values"]
 
         try:
             # create a new log entry
@@ -46,6 +60,8 @@ class LogEntryResource(Resource):
                 entry_type=log_entry_type,
                 data=log_data,
                 info=log_info,
+                decision_variables = log_decision_variables,
+                objective_values = log_objective_values,
                 timestamp=datetime.datetime.now(),
             )
             db.session.add(log_entry)
@@ -57,3 +73,35 @@ class LogEntryResource(Resource):
             return {"message": "Could not add log entry."}, 500
 
         return {"message": "Log entry added successfully."}, 201
+
+    @jwt_required()
+    def get(self):
+        current_user = get_jwt_identity()
+        current_user_id = UserModel.query.filter_by(username=current_user).first().id
+
+        # TODO: remove try catch block and check the problems query
+        try:
+            logs = LogEntry.query.filter_by(user_id=current_user_id).all()
+
+            response = {
+                "logs": [
+                    {
+                        "id":log.id,
+                        "entry_type": log.entry_type,
+                        "data": log.data,
+                        "info": log.info,
+                        "decision_variables":log.decision_variables,
+                        "objective_values": log.objective_values,
+                        "timestamp": json.dumps(log.timestamp, default=str),
+                    }
+                    for log in logs
+                ]
+            }
+
+            return response, 200
+        except Exception as e:
+            print(f"DEBUG: {e}")
+            return {"message": "Could not fetch logs!"}, 404
+
+
+

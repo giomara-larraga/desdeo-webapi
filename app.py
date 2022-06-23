@@ -84,4 +84,4 @@ api.add_resource(questionnaire_resources.QuestionnaireDuringSolutionProcessAfter
 api.add_resource(solution_archive_resources.Archive, "/archive")
 
 # Add log endpoint
-api.add_resource(log_resources.LogEntryResource, "/log")
+api.add_resource(log_resources.LogEntryResource, "/log/create")

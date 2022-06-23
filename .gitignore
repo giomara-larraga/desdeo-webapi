@@ -1,6 +1,5 @@
 .vscode
 __*
-*.db
 docs/build/*
 users_and_pass.csv
 

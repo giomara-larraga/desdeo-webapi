@@ -11,6 +11,8 @@ class LogEntry(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False)
     data = db.Column(db.String(1000), nullable=True)
     info = db.Column(db.String(1000), nullable=False)
+    decision_variables = db.Column(db.String(1000), nullable=True)
+    objective_values = db.Column(db.String(1000), nullable=True)
 
     def validate_type(self, _, type_):
         if type_ not in log_entry_types:
