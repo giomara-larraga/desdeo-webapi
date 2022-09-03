@@ -6,7 +6,7 @@ from flask_jwt_extended import JWTManager
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
+app = Flask(__name__)    
 CORS(app)
 
 api = Api(app)
@@ -85,3 +85,10 @@ api.add_resource(solution_archive_resources.Archive, "/archive")
 
 # Add log endpoint
 api.add_resource(log_resources.LogEntryResource, "/log/create")
+
+@app.route("/")
+def index():
+    return "Hello Medium"
+
+if __name__ == '__main__':
+    app.run(port=5000)
