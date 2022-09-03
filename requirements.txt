@@ -1,4 +1,4 @@
-guinicorn==20.1.0;
+guinicorn==20.0.4;
 alabaster==0.7.12; python_version >= "3.5"
 aniso8601==9.0.1; python_version >= "3.5"
 appdirs==1.4.4; python_version >= "3.6"
