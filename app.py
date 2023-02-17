@@ -69,17 +69,22 @@ api.add_resource(method_resources.MethodCreate, "/method/create")
 api.add_resource(method_resources.MethodControl, "/method/control")
 
 # Add questionnaire endpoints
-api.add_resource(
-    questionnaire_resources.QuestionnaireAfterSolutionProcess, "/questionnaire/after"
-)
-api.add_resource(
-    questionnaire_resources.QuestionnaireDuringSolutionProcess, "/questionnaire/during"
-)
-api.add_resource(
-    questionnaire_resources.QuestionnaireDuringSolutionProcessFirstIteration, "/questionnaire/during/first"
-)
-api.add_resource(questionnaire_resources.QuestionnaireDuringSolutionProcessAfterNew, "/questionnaire/during/new")
+#api.add_resource(
+#    questionnaire_resources.QuestionnaireAfterSolutionProcess, "/questionnaire/after"
+#)
+#api.add_resource(
+#    questionnaire_resources.QuestionnaireDuringSolutionProcess, "/questionnaire/during"
+#)
+#api.add_resource(
+#    questionnaire_resources.QuestionnaireDuringSolutionProcessFirstIteration, "/questionnaire/during/first"
+#)
+#api.add_resource(questionnaire_resources.QuestionnaireDuringSolutionProcessAfterNew, "/questionnaire/during/new")
 
+api.add_resource(questionnaire_resources.QuestionnaireDemographic, "/questionnaire/demographic")
+api.add_resource(questionnaire_resources.QuestionnaireInit, "/questionnaire/init")
+api.add_resource(questionnaire_resources.QuestionnaireEnd, "/questionnaire/end")
+api.add_resource(questionnaire_resources.QuestionnaireSwitch, "/questionnaire/switch")
+# 
 # Add archive endpoint
 api.add_resource(solution_archive_resources.Archive, "/archive")
 

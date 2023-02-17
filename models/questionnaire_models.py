@@ -1,51 +1,51 @@
 from app import db
 
 
-class QuestionLikert(db.Model):
-    __tablename__ = "question_likert"
+class Answer(db.Model):
+    __tablename__ = "answer"
     id = db.Column(db.Integer, primary_key=True, unique=True)
-    parent_id = db.Column(db.Integer, db.ForeignKey("questionnaire.id"), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
-    question_txt = db.Column(db.String(200), nullable=False)
-    answer = db.Column(db.Integer, nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey("question.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    answer_text = db.Column(db.String(200), nullable=False)
+    time = db.Column(db.DateTime, nullable=False)
 
     def __repr__(self):
         return (
-            f"id: {self.id}, parent_id: {self.parent_id}, name: {self.name}, question: {self.question_txt}, "
-            f"answer: {self.answer}"
+            f"id: {self.id}, question_id: {self.question_id}, user_id: {self.user_id}, answer_text: {self.answer_text}, "
+            f"time: {self.time}"
         )
 
 
-class QuestionOpen(db.Model):
-    __tablename__ = "question_open"
+class Question(db.Model):
+    __tablename__ = "question"
     id = db.Column(db.Integer, primary_key=True, unique=True)
-    parent_id = db.Column(db.Integer, db.ForeignKey("questionnaire.id"), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
+    questionnaire_id = db.Column(db.Integer, db.ForeignKey("questionnaire.id"), nullable=False)
     question_txt = db.Column(db.String(200), nullable=False)
-    answer = db.Column(db.String(1000), nullable=False)
+    question_type = db.Column(db.String(200), nullable=False)
+    show_solution = db.Column(db.Integer, nullable=False)
+    #answer = db.Column(db.String(1000), nullable=False)
 
     def __repr__(self):
         return (
-            f"id: {self.id}, parent_id: {self.parent_id}, name: {self.name}, question: {self.question_txt}, "
-            f"answer: {self.answer}"
+            f"id: {self.id}, questionnaire_id: {self.questionnaire_id}, question_txt: {self.question_txt}, question_type: {self.question_type}, "
+            f"show_solution: {self.show_solution}"
         )
 
 
 class Questionnaire(db.Model):
     __tablename__ = "questionnaire"
     id = db.Column(db.Integer, primary_key=True, unique=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    name = db.Column(db.String(1000), nullable=False)
-    description = db.Column(db.String(1000))
-    start_time = db.Column(db.DateTime, nullable=False)
-    completion_time = db.Column(db.DateTime, nullable=False)
+    #user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    type = db.Column(db.String(1000), nullable=False)
+    group = db.Column(db.Integer, nullable=False)
+    #start_time = db.Column(db.DateTime, nullable=False)
+    #completion_time = db.Column(db.DateTime, nullable=False)
 
-    questions_likert = db.relationship(QuestionLikert)
-    questions_open = db.relationship(QuestionOpen)
+    #questions = db.relationship(Question)
+    #questions_open = db.relationship(QuestionOpen)
 
     def __repr__(self):
         return (
-            f"id: {self.id}, user_id: {self.user_id}, name: {self.name}, start_time: {self.start_time}, "
-            f"completion_time: {self.completion_time},"
-            f"likert children: {self.questions_likert}, open children: {self.questions_open}"
+            f"id: {self.id}, type: {self.type}, group: {self.group} "
+            #f"question children: {self.questions}"
         )
