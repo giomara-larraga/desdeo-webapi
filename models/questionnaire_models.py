@@ -22,13 +22,13 @@ class Question(db.Model):
     questionnaire_id = db.Column(db.Integer, db.ForeignKey("questionnaire.id"), nullable=False)
     question_txt = db.Column(db.String(200), nullable=False)
     question_type = db.Column(db.String(200), nullable=False)
-    show_solution = db.Column(db.Integer, nullable=False)
+    page = db.Column(db.Integer)
     #answer = db.Column(db.String(1000), nullable=False)
 
     def __repr__(self):
         return (
             f"id: {self.id}, questionnaire_id: {self.questionnaire_id}, question_txt: {self.question_txt}, question_type: {self.question_type}, "
-            f"show_solution: {self.show_solution}"
+            f"page: {self.page}"
         )
 
 
