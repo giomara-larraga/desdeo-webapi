@@ -7,7 +7,8 @@ class UserModel(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     username = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    problems = db.relationship("Problem", backref="owner", lazy=True)
+    groupId = db.Column(db.Integer, nullable=False)
+    # problems = db.relationship("Problem", backref="owner", lazy=True)
 
     def __repr__(self):
         return f"User: ('{self.username}')"
@@ -26,6 +27,7 @@ class UserModel(db.Model):
             return {
                 "username": x.username,
                 "password": x.password,
+                "groupId": x.groupId,
             }
 
         return {"users": list(map(lambda x: to_json(x), UserModel.query.all()))}

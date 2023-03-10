@@ -7,18 +7,20 @@ import string
 import dill
 import numpy as np
 import pandas as pd
-from desdeo_problem.problem import _ScalarObjective
-from desdeo_problem.problem import DiscreteDataProblem
-from desdeo_problem.surrogatemodels.lipschitzian import LipschitzianRegressor
-from desdeo_problem.problem import Variable
+
+# from desdeo_problem.problem import _ScalarObjective
+# from desdeo_problem.problem import DiscreteDataProblem
+# from desdeo_problem.surrogatemodels.lipschitzian import LipschitzianRegressor
+# from desdeo_problem.problem import Variable
 
 from app import db
-from models.problem_models import Problem as ProblemModel
+
+# from models.problem_models import Problem as ProblemModel
 from models.user_models import UserModel
 from models.questionnaire_models import Question, Questionnaire
 
 parser = argparse.ArgumentParser(
-    description="Add N new user to the database with a pre-defined problem. and a given username prefix."
+    description="Add N new user to the database with a pre-defined groupID and a given username prefix."
 )
 parser.add_argument(
     "--N", type=int, help="The number of usernames to be added.", required=True
@@ -55,7 +57,8 @@ def create_question(
 def main():
     letters = string.ascii_lowercase
     args = vars(parser.parse_args())
-    methods = ["nimbus", "nautilus_nimbus"]
+    methods = ["nimbus", "nautilus"]
+    ids = [1, 2]
     usernames = [
         [f"{method}_{n}" for n in range(1, args["N"] + 1)] for method in methods
     ]
@@ -64,11 +67,21 @@ def main():
         ("".join(random.choice(letters) for i in range(6)))
         for j in range(len(usernames))
     ]
+    groupIds = np.array([])
+    # id1 = np.ones(N * len(ids)) * ids[1]
+    for i in range(0, len(ids)):
+        groupIds = np.append(groupIds, np.ones(args["N"]) * ids[i], axis=0)
+
+    usernames.append("giomara")
+    passwords.append("123456")
+    groupIds = np.append(groupIds, 2)
+    # print(usernames)
+    # print(groupIds)
 
     try:
-        for username, password in zip(usernames, passwords):
-            add_user(username, password)
-            add_sus_problem(username)
+        for username, password, groupId in zip(usernames, passwords, groupIds):
+            add_user(username, password, groupId)
+            # add_sus_problem(username)
     except Exception as e:
         print("something went wrong...")
         print(e)
@@ -78,7 +91,7 @@ def main():
         writer = csv.writer(
             csvfile, delimiter=" ", quotechar="|", quoting=csv.QUOTE_MINIMAL
         )
-        list(map(lambda x: writer.writerow(x), zip(usernames, passwords)))
+        list(map(lambda x: writer.writerow(x), zip(usernames, passwords, groupIds)))
 
     print(f"Added users {usernames} to the database succesfully.")
     questionnaires = []
@@ -412,14 +425,18 @@ def main():
     print(f"Added questions to the database succesfully.")
 
 
-def add_user(username, password):
+def add_user(username, password, groupId):
     db.session.add(
-        UserModel(username=username, password=UserModel.generate_hash(password))
+        UserModel(
+            username=username,
+            password=UserModel.generate_hash(password),
+            groupId=groupId,
+        )
     )
     db.session.commit()
 
 
-def add_sus_problem(username):
+""" def add_sus_problem(username):
     user_query = UserModel.query.filter_by(username=username).first()
     if user_query is None:
         print(f"USername {username} not found")
@@ -456,7 +473,7 @@ def add_sus_problem(username):
         )
     )
     db.session.commit()
-    print(f"Sustainability problem added for user '{username}'")
+    print(f"Sustainability problem added for user '{username}'") """
 
 
 def add_question(id, questionnaire_id, question_txt, question_type, page):

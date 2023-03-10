@@ -1,23 +1,38 @@
 from datetime import datetime, timezone
 
 from app import db
-from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt, get_jwt_identity, jwt_required
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+)
 from flask_restx import Resource, reqparse
 from models.user_models import TokenBlocklist, UserModel
 
-parser = reqparse.RequestParser()
-parser.add_argument("username", help="The username is required", required=True)
-parser.add_argument("password", help="The password is required", required=True)
+parser_register = reqparse.RequestParser()
+parser_register.add_argument("username", help="The username is required", required=True)
+parser_register.add_argument("password", help="The password is required", required=True)
+parser_register.add_argument("groupId", help="The groupId is required", required=True)
+
+parser_login = reqparse.RequestParser()
+parser_login.add_argument("username", help="The username is required", required=True)
+parser_login.add_argument("password", help="The password is required", required=True)
 
 
 class UserRegistration(Resource):
     def post(self):
-        data = parser.parse_args()
+        data = parser_register.parse_args()
 
         if UserModel.find_by_username(data["username"]):
             return {"message": f"User {data['username']} already exists!"}, 400
 
-        new_user = UserModel(username=data["username"], password=UserModel.generate_hash(data["password"]))
+        new_user = UserModel(
+            username=data["username"],
+            password=UserModel.generate_hash(data["password"]),
+            groupId=data["groupId"],
+        )
         try:
             new_user.save_to_db()
             access_token = create_access_token(identity=data["username"])
@@ -34,7 +49,7 @@ class UserRegistration(Resource):
 
 class UserLogin(Resource):
     def post(self):
-        data = parser.parse_args()
+        data = parser_login.parse_args()
         current_user = UserModel.find_by_username(data["username"])
 
         if not current_user:
@@ -48,6 +63,7 @@ class UserLogin(Resource):
                     "message": f"Logged as {current_user.username}",
                     "access_token": access_token,
                     "refresh_token": refresh_token,
+                    "group_id": current_user.groupId,
                 }, 200
         except Exception as e:
             print(f"DEBUG: {e}")
@@ -68,7 +84,9 @@ class UserLogoutAccess(Resource):
             return {"message": "Access token revoked"}, 200
         except Exception as e:
             print(f"DEBUG {e}")
-            return {"message": "Something went wrong while revoking an access token."}, 500
+            return {
+                "message": "Something went wrong while revoking an access token."
+            }, 500
 
 
 class UserLogoutRefresh(Resource):
@@ -82,7 +100,9 @@ class UserLogoutRefresh(Resource):
             return {"message": "Refresh token revoked"}
         except Exception as e:
             print(f"DEBUG {e}")
-            return {"message": "Something went wrong while revoking an refresh token."}, 500
+            return {
+                "message": "Something went wrong while revoking an refresh token."
+            }, 500
 
 
 class TokenRefresh(Resource):
