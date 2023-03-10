@@ -7,6 +7,13 @@ from models.user_models import UserModel
 import simplejson as json
 from sqlalchemy import and_
 
+answer_entry_parser = reqparse.RequestParser()
+answer_entry_parser.add_argument("key", type=int, action="append")
+answer_entry_parser.add_argument(
+    "value",
+    action="append",
+)
+
 
 class QuestionnaireDemographic(Resource):
     def get(self):
@@ -112,7 +119,7 @@ class QuestionnaireEnd(Resource):
                 "name": str(question.id),
                 "type": "text",
                 "title": question.question_txt,
-                "isRequired": False,
+                "isRequired": True,
             }
         else:
             question_r = None
@@ -129,7 +136,7 @@ class QuestionnaireEnd(Resource):
                 "columns": [
                     {"value": 5, "text": "Strongly agree"},
                     {"value": 4, "text": "Agree"},
-                    {"value": 3, "text": "Neutral"},
+                    {"value": 3, "text": "Neither agree nor disagree"},
                     {"value": 2, "text": "Disagree"},
                     {"value": 1, "text": "Strongly disagree"},
                 ],
@@ -212,7 +219,7 @@ class QuestionnaireSwitch(Resource):
                 "columns": [
                     {"value": 5, "text": "Strongly agree"},
                     {"value": 4, "text": "Agree"},
-                    {"value": 3, "text": "Neutral"},
+                    {"value": 3, "text": "Neither agree nor disagree"},
                     {"value": 2, "text": "Disagree"},
                     {"value": 1, "text": "Strongly disagree"},
                 ],
@@ -242,3 +249,33 @@ class QuestionnaireSwitch(Resource):
         except Exception as e:
             print(f"DEBUG: {e}")
             return {"message": "Could not fetch questions!"}, 404
+
+
+class AnswerQuestionnaire(Resource):
+    @jwt_required()
+    def post(self):
+        try:
+            answers = answer_entry_parser.parse_args()
+            current_user = get_jwt_identity()
+            current_user_id = (
+                UserModel.query.filter_by(username=current_user).first().id
+            )
+
+            for key, value in zip(answers.key, answers.value):
+                # create a new log entry
+                answer_id = int(key)
+                answer_text = str(value)
+                answer_entry = Answer(
+                    question_id=answer_id,
+                    user_id=current_user_id,
+                    answer_text=answer_text,
+                    time=datetime.datetime.now(),
+                )
+                db.session.add(answer_entry)
+            db.session.commit()
+        except Exception as e:
+            print(f"DEBUG: Got an exception while creating saving answer: {e}")
+            print(answers)
+            return {"message": "Could not add answer."}, 500
+
+        return {"message": "Answer added successfully."}, 201
