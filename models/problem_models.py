@@ -12,11 +12,14 @@ class Problem(db.Model):
     name = db.Column(db.String(120), nullable=False)
     problem_type = db.Column(db.String(120), nullable=False)
     problem_pickle = db.Column(db.PickleType(pickler=dill))
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     minimize = db.Column(db.String(120), nullable=False)
+    problemGroup = db.Column(db.Integer, nullable=False)  # One of {1, 2, 3}. Decides the version of the sustainability problem.
 
     def __repr__(self):
-        return f"Problem('{self.name}', '{self.problem_type}', '{self.owner}', '{self.minimize}'')"
+        return (
+            f"Problem('{self.name}', '{self.problem_type}',"
+            f" '{self.owner}', '{self.minimize}', '{self.problemGroup}'')"
+        )
 
 
 class SolutionArchive(db.Model):
