@@ -21,6 +21,8 @@ pandas = "^1.3.1"
 simplejson = "^3.17.3"
 desdeo-emo = "^1.3.3"
 openpyxl = "^3.0.9"
+werkzeug = "2.1.2"
+sqlalchemy = "1.4.31"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.4"
@@ -33,6 +35,9 @@ rstcheck = "^3.3.1"
 sphinx-rtd-theme = "^0.5.1"
 pytest = "^6.2.3"
 matplotlib = "^3.4.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

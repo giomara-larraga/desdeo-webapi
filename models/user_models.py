@@ -8,6 +8,7 @@ class UserModel(db.Model):
     username = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     groupId = db.Column(db.Integer, nullable=False)
+    problemGroup = db.Column(db.Integer, nullable=False)  # One of {1, 2, 3}. Decides the version of the sustainability problem.
     # problems = db.relationship("Problem", backref="owner", lazy=True)
 
     def __repr__(self):

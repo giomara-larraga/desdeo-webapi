@@ -34,8 +34,8 @@ available_methods = {
 
 method_create_parser = reqparse.RequestParser()
 method_create_parser.add_argument(
-    "problem_id",
-    type=str,
+    "problemGroup",
+    type=int,
     help="The id of the problem the method being created should attempt to solve.",
     required=True,
 )
@@ -84,24 +84,28 @@ class MethodCreate(Resource):
     def post(self):
         data = method_create_parser.parse_args()
 
-        problem_id = data["problem_id"]
+        problemGroup = data["problemGroup"]
 
         try:
             current_user = get_jwt_identity()
+            current_problemGroup = (
+                UserModel.query.filter_by(username=current_user).first().problemGroup
+            )
             current_user_id = (
                 UserModel.query.filter_by(username=current_user).first().id
             )
+            assert problemGroup == current_problemGroup
 
-            query = Problem.query.filter_by(
-                user_id=current_user_id, id=problem_id
-            ).first()
+            query = Problem.query.filter_by(problemGroup=problemGroup).first()
             problem = query.problem_pickle
             problem_minimize = query.minimize
 
         except Exception as e:
             print(f"DEBUG: {e}")
             # not found
-            return {"message": f"Could not find problem with id={problem_id}."}, 404
+            return {
+                "message": f"Could not find problem with problemGroup={problemGroup}."
+            }, 404
 
         # initialize the method
         # check method is available
@@ -513,7 +517,6 @@ def EAControlPost(preference_type, last_request, user_response):
     # 5: Classification
 
     if preference_type == 5:
-
         return {
             "current solution": user_response["current_solution"],
             "classifications": user_response["classifications"],
@@ -548,7 +551,6 @@ def EAControlPost(preference_type, last_request, user_response):
 
 
 def IOPISControlPost(last_request, user_response):
-
     np_preference = np.atleast_2d(user_response["preference_data"])
     columns = last_request.content["dimensions_data"]
     last_request.response = pd.DataFrame(np_preference, columns=columns.columns)

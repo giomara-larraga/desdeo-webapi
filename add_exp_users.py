@@ -9,13 +9,14 @@ import numpy as np
 import pandas as pd
 
 # from desdeo_problem.problem import _ScalarObjective
-# from desdeo_problem.problem import DiscreteDataProblem
+from desdeo_problem.problem import DiscreteDataProblem
+
 # from desdeo_problem.surrogatemodels.lipschitzian import LipschitzianRegressor
 # from desdeo_problem.problem import Variable
 
 from app import db
 
-# from models.problem_models import Problem as ProblemModel
+from models.problem_models import Problem as ProblemModel
 from models.user_models import UserModel
 from models.questionnaire_models import Question, Questionnaire
 
@@ -74,14 +75,24 @@ def main():
 
     usernames.append("giomara")
     passwords.append("123456")
-    groupIds = np.append(groupIds, 2)
+    groupIds = np.append(groupIds, 2).tolist()
     # print(usernames)
     # print(groupIds)
 
+    problemGroups = np.array(range(len(usernames)), dtype=int)
+    problemGroups = (
+        problemGroups % 3
+    )  # One of {0, 1, 2}. Decides the version of the sustainability problem.
+    problemGroups = problemGroups.tolist()
+
     try:
-        for username, password, groupId in zip(usernames, passwords, groupIds):
-            add_user(username, password, groupId)
-            # add_sus_problem(username)
+        for username, password, groupId, problemGroup in zip(
+            usernames, passwords, groupIds, problemGroups
+        ):
+            add_user(username, password, groupId, problemGroup)
+        print(f"Added users {usernames} to the database succesfully.")
+        for problemGroup in problemGroups:
+            add_sus_problem(problemGroup)
     except Exception as e:
         print("something went wrong...")
         print(e)
@@ -91,9 +102,13 @@ def main():
         writer = csv.writer(
             csvfile, delimiter=" ", quotechar="|", quoting=csv.QUOTE_MINIMAL
         )
-        list(map(lambda x: writer.writerow(x), zip(usernames, passwords, groupIds)))
+        list(
+            map(
+                lambda x: writer.writerow(x),
+                zip(usernames, passwords, groupIds, problemGroups),
+            )
+        )
 
-    print(f"Added users {usernames} to the database succesfully.")
     questionnaires = []
     questionnaires.append(
         create_questionnaire(1, "Demographic", 0)
@@ -422,27 +437,31 @@ def main():
         print(e)
         exit()
 
-    print(f"Added questions to the database succesfully.")
+    print("Added questions to the database succesfully.")
 
 
-def add_user(username, password, groupId):
+def add_user(username, password, groupId, problemGroup):
+    # print(problemGroup)
     db.session.add(
         UserModel(
             username=username,
             password=UserModel.generate_hash(password),
             groupId=groupId,
+            problemGroup=int(problemGroup),
         )
     )
     db.session.commit()
 
 
-""" def add_sus_problem(username):
-    user_query = UserModel.query.filter_by(username=username).first()
+def add_sus_problem(problemGroup):
+    # print(type(problemGroup))
+    user_query = UserModel.query.filter_by(problemGroup=int(problemGroup)).first()
+    # print(type(user_query.problemGroup))
     if user_query is None:
-        print(f"USername {username} not found")
+        print(f"No users in group {problemGroup}.")
         return
-    else:
-        id = user_query.id
+    # else:
+    #    id = user_query.id
 
     file_name = "./tests/data/sustainability_spanish.csv"
 
@@ -452,28 +471,33 @@ def add_user(username, password, groupId):
         ["social", "economic", "environmental"]
     ]
 
-    var_names = [f"x{i}" for i in range(1, 12)]
+    obj_order = {
+        0: ["social", "economic", "environmental"],
+        1: ["economic", "environmental", "social"],
+        2: ["environmental", "social", "economic"],
+    }
 
-    ideal = data[["social", "economic", "environmental"]].min().values
-    nadir = data[["social", "economic", "environmental"]].max().values
+    var_names = [f"x{i}" for i in range(1, 12)]
+    obj_names = obj_order[problemGroup]
+
+    data = data[obj_names + var_names]  # Reorder objectives based on problemGroup
+    ideal = data[obj_names].min().values
+    nadir = data[obj_names].max().values
 
     # define the sus problem
-    var_names = [f"x{i}" for i in range(1, 12)]
-    obj_names = ["social", "economic", "environmental"]
-
     problem = DiscreteDataProblem(data, var_names, obj_names, ideal, nadir)
 
     db.session.add(
         ProblemModel(
-            name="Spanish sustainability problem",
+            name=f"Spanish sustainability problem {problemGroup}",
             problem_type="Discrete",
             problem_pickle=problem,
-            user_id=id,
             minimize=json.dumps([-1, -1, -1]),
+            problemGroup=problemGroup,
         )
     )
     db.session.commit()
-    print(f"Sustainability problem added for user '{username}'") """
+    print(f"Sustainability problem added for problem group '{problemGroup}'")
 
 
 def add_question(id, questionnaire_id, question_txt, question_type, page):

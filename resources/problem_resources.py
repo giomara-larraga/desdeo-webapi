@@ -146,7 +146,7 @@ problem_discrete_parser.add_argument(
 # Problem access parser
 problem_access_parser = reqparse.RequestParser()
 problem_access_parser.add_argument(
-    "problem_id",
+    "problemGroup",
     type=int,
     help="Specify the id of the problem to be accessed.",
     required=True,
@@ -195,12 +195,14 @@ class ProblemAccess(Resource):
         data = problem_access_parser.parse_args()
 
         problem_query = Problem.query.filter_by(
-            user_id=current_user_id, id=data["problem_id"]
+            problemGroup=data["problemGroup"]
         ).first()
 
         if not problem_query:
             # problem not found, 404
-            return {"message": f"Problem with id {data['problem_id']} not found"}, 404
+            return {
+                "message": f"Problem with problemGroup {data['problemGroup']} not found"
+            }, 404
 
         try:
             # from model
