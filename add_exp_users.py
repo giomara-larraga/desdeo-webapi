@@ -14,8 +14,7 @@ from desdeo_problem.problem import DiscreteDataProblem
 # from desdeo_problem.surrogatemodels.lipschitzian import LipschitzianRegressor
 # from desdeo_problem.problem import Variable
 
-from app import db
-
+from app import app, db
 from models.problem_models import Problem as ProblemModel
 from models.user_models import UserModel
 from models.questionnaire_models import Question, Questionnaire
@@ -29,8 +28,11 @@ parser.add_argument(
 
 dill.settings["recurse"] = True
 
-db.drop_all()
-db.create_all()
+# db.init_app(app)
+
+with app.app_context():
+    db.drop_all()
+    db.create_all()
 
 args = vars(parser.parse_args())
 
