@@ -21,9 +21,11 @@ db_name = os.environ.get("POSTGRES_DB")
 
 ACCESS_EXPIRES = timedelta(hours=2)
 app.config["PROPAGATE_EXCEPTIONS"] = True
-app.config[
+"""app.config[
     "SQLALCHEMY_DATABASE_URI"
-] = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+] = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"""
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "secret-key"
 app.config["JWT_SECRET_KEY"] = "jwt-secret-key"

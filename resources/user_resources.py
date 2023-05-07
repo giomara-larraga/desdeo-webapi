@@ -59,12 +59,12 @@ class UserLogin(Resource):
             if UserModel.verify_hash(data["password"], current_user.password):
                 access_token = create_access_token(identity=data["username"])
                 refresh_token = create_refresh_token(identity=data["username"])
-                print("hi")
+                """print("hi")
                 print(type(current_user.username))
                 print(type(access_token))
                 print(type(refresh_token))
                 print(type(current_user.groupId))
-                print(current_user.problemGroup)
+                print(current_user.problemGroup)"""
                 return {
                     "message": f"Logged as {current_user.username}",
                     "access_token": access_token,

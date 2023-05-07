@@ -8,7 +8,7 @@ from desdeo_problem import (
     Variable,
     _ScalarObjective,
 )
-from desdeo_tools.maps import classificationPIS
+#from desdeo_tools.maps import classificationPIS
 from desdeo_emo.problem import IOPISProblem
 from desdeo_tools.scalarization import AUG_GUESS_GLIDE, AUG_STOM_GLIDE
 from flask_jwt_extended import get_jwt_identity, jwt_required
