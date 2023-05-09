@@ -62,23 +62,55 @@ class QuestionnaireInit(Resource):
     def get(self):
         # TODO: remove try catch block and check the problems query
         try:
-            question_list = Question.query.filter_by(questionnaire_id=2).all()
+            question_list = Question.query.filter_by(
+                questionnaire_id=2, question_type="rating"
+            ).all()
+
+            group_question_list = Question.query.filter_by(
+                questionnaire_id=2, question_type="text"
+            ).all()
+
+            text_elements = [
+                {
+                    "name": str(question.id),
+                    "title": question.question_txt,
+                    "type": question.question_type,
+                    "isRequired": True,
+                }
+                for question in question_list
+            ]
+            # print(text_elements)
+
+            group_elements = [
+                {
+                    "type": "multipletext",
+                    "name": "groupelements",
+                    "title": "What objective function values do you think you can achieve as your final solution?",
+                    "isRequired": True,
+                    "items": [
+                        {
+                            "name": str(question.id),
+                            "title": question.question_txt,
+                            # "type": question.question_type,
+                            "isRequired": True,
+                        }
+                        for question in group_question_list
+                    ],
+                }
+            ]
+            text_elements.append(group_elements[0])
+            # print(text_elements)
             response = {
-                "elements": [
-                    {
-                        "name": str(question.id),
-                        "title": question.question_txt,
-                        "type": question.question_type,
-                        "isRequired": True,
-                    }
-                    for question in question_list
-                ],
+                "elements": text_elements,
                 "showQuestionNumbers": True,
             }
+
+            response["elements"]
             for element in response["elements"]:
                 if element["type"] == "rating":
                     element["minRateDescription"] = "Not tired"
                     element["maxRateDescription"] = "Very tired"
+            print(response)
             return response, 200
         except Exception as e:
             print(f"DEBUG: {e}")
