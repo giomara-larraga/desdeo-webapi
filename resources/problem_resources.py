@@ -7,9 +7,9 @@ from desdeo_problem import (
     MOProblem,
     Variable,
     _ScalarObjective,
-    classificationPISProblem,
 )
 from desdeo_tools.maps import classificationPIS
+from desdeo_emo.problem import IOPISProblem
 from desdeo_tools.scalarization import AUG_GUESS_GLIDE, AUG_STOM_GLIDE
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restx import Resource, reqparse
@@ -412,7 +412,7 @@ class ProblemCreation(Resource):
                     "levels": (ideal + nadir) / 2 + [0, 0.1, -0.1, 0.1],
                 }
                 PIS.update_preference(first_preference)
-                problem = classificationPISProblem(
+                problem = IOPISProblem(
                     objectives=objectives,
                     variables=variables,
                     nadir=nadir,

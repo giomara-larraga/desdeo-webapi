@@ -87,6 +87,7 @@ api.add_resource(questionnaire_resources.QuestionnaireSwitch, "/questionnaire/sw
 # 
 # Add archive endpoint
 api.add_resource(solution_archive_resources.Archive, "/archive")
+api.add_resource(solution_archive_resources.GetArchive, "/getarchive")
 api.add_resource(questionnaire_resources.AnswerQuestionnaire, "/answer")
 
 # Add log endpoint
