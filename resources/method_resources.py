@@ -98,7 +98,7 @@ class MethodCreate(Resource):
         
         starting_point = data["starting_point"]
 
-        if (starting_point !=None):
+        if (starting_point is not None):
             starting_point = np.array(starting_point.split(','), float) 
 
         try:
