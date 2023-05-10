@@ -49,6 +49,14 @@ method_create_parser.add_argument(
     ),
     required=True,
 )
+method_create_parser.add_argument(
+    "starting_point",
+    type=str,
+    help=(
+        f"Starting point for NIMBUS"
+    ),
+    default=None,
+)
 
 method_control_parser = reqparse.RequestParser()
 method_control_parser.add_argument(
@@ -87,6 +95,11 @@ class MethodCreate(Resource):
         data = method_create_parser.parse_args()
 
         problemGroup = data["problemGroup"]
+        
+        starting_point = data["starting_point"]
+
+        if (starting_point !=None):
+            starting_point = np.array(starting_point.split(','), float) 
 
         try:
             current_user = get_jwt_identity()
@@ -127,7 +140,10 @@ class MethodCreate(Resource):
         if method_name == "reference_point_method":
             method = ReferencePointMethod(problem, problem.ideal, problem.nadir)
         elif method_name == "synchronous_nimbus":
-            method = NIMBUS(problem)
+            if starting_point is None:
+                method = NIMBUS(problem)
+            else:
+                method = NIMBUS(problem, starting_point=starting_point)
         elif method_name == "reference_point_method_alt":
             method = ReferencePointMethod(problem, problem.ideal, problem.nadir)
         elif method_name == "nautilus_navigator":

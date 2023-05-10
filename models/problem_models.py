@@ -24,9 +24,13 @@ class Problem(db.Model):
 
 class SolutionArchive(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
-    problem_id = db.Column(db.Integer, db.ForeignKey("problem.id"), nullable=False)
-    solutions_dict_pickle = db.Column(db.PickleType(pickler=dill))
-    meta_data = db.Column(db.String(2000), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    method_name=db.Column(db.String(100), nullable=False)
+    objectives=db.Column(db.String(200), nullable=False)
+    variables=db.Column(db.String(200), nullable=False)
+    #problem_id = db.Column(db.Integer, db.ForeignKey("problem.id"), nullable=False)
+    #solutions_dict_pickle = db.Column(db.PickleType(pickler=dill))
+    #meta_data = db.Column(db.String(2000), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
 
     @validates("solutions_dict_pickle")
