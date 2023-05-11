@@ -61,7 +61,7 @@ def main():
     with app.app_context():
         letters = string.ascii_lowercase
         args = vars(parser.parse_args())
-        methods = ["nimbus", "nautilus"]
+        methods = ["stratus", "nemo"]
         ids = [1, 2]
         usernames = [
             [f"{method}_{n}" for n in range(1, args["N"] + 1)] for method in methods
@@ -78,13 +78,21 @@ def main():
 
         usernames.append("giomara")
         passwords.append("123456")
-        groupIds = np.append(groupIds, 2).tolist()
+        usernames.append("kaisa")
+        passwords.append("123456")
+        usernames.append("aruiz")
+        passwords.append("123456")
+        usernames.append("fruiz")
+        passwords.append("123456")
+        usernames.append("bsaini")
+        passwords.append("123456")
+        groupIds = np.append(groupIds, [2]*5).tolist()
         # print(usernames)
         # print(groupIds)
 
         problemGroups = np.array(range(len(usernames)), dtype=int)
         problemGroups = (
-            problemGroups % 3
+            problemGroups % 6
         )  # One of {0, 1, 2}. Decides the version of the sustainability problem.
         problemGroups = problemGroups.tolist()
 
@@ -498,6 +506,9 @@ def add_sus_problem(problemGroup):
             0: ["social", "economic", "environmental"],
             1: ["economic", "environmental", "social"],
             2: ["environmental", "social", "economic"],
+            3: ["social", "environmental", "economic"],
+            4: ["economic", "social", "environmental"],
+            5: ["environmental", "economic", "social"],
         }
 
         var_names = [f"x{i}" for i in range(1, 12)]
