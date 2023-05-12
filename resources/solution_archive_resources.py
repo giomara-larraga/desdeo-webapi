@@ -1,4 +1,6 @@
-from app import db
+
+from database import db
+
 from sqlalchemy import and_, desc
 
 from copy import deepcopy

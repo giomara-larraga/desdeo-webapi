@@ -1,14 +1,14 @@
 import numpy as np
 import pandas as pd
 import simplejson as json
-from app import db
+from database import db
 from desdeo_problem import (
     DiscreteDataProblem,
     MOProblem,
     Variable,
     _ScalarObjective,
 )
-from desdeo_tools.maps import classificationPIS
+#from desdeo_tools.maps import classificationPIS
 from desdeo_emo.problem import IOPISProblem
 from desdeo_tools.scalarization import AUG_GUESS_GLIDE, AUG_STOM_GLIDE
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -400,7 +400,7 @@ class ProblemCreation(Resource):
             if data["problem_type"] == "Analytical":
                 problem = MOProblem(objectives, variables, ideal=ideal, nadir=nadir)
             elif data["problem_type"] == "Classification PIS":
-                PIS = classificationPIS(
+                PIS = IOPISProblem(
                     scalarizers=[AUG_GUESS_GLIDE, AUG_STOM_GLIDE],
                     utopian=ideal - 1e-6,
                     nadir=nadir,

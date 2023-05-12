@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 import simplejson as json
-from app import db
+from database import db
 from desdeo_mcdm.interactive import (
     NIMBUS,
     NautilusNavigator,
@@ -9,9 +9,10 @@ from desdeo_mcdm.interactive import (
     ReferencePointMethod,
     ENautilus,
 )
+from desdeo_mcdm.interactive import NimbusClassificationRequest
 from desdeo_problem.problem.Problem import DiscreteDataProblem
-from desdeo_emo.EAs import RVEA, IOPIS_NSGAIII
 from desdeo_emo.problem import IOPISProblem
+from desdeo_emo.EAs import RVEA, IOPIS_NSGAIII
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restx import Resource, reqparse
 from models.method_models import Method
@@ -97,7 +98,7 @@ class MethodCreate(Resource):
         
         starting_point = data["starting_point"]
 
-        if (starting_point !=None):
+        if (starting_point is not None):
             starting_point = np.array(starting_point.split(','), float) 
 
         try:
@@ -245,7 +246,7 @@ class MethodControl(Resource):
         method = deepcopy(method_query.method_pickle)
 
         # EA methods handle a bit differently, multiple requests to be handled
-        if isinstance(method, RVEA):
+        if type(method).__name__ == RVEA.__name__:
             return_message, request = EAControlGet(method)
         elif isinstance(method, IOPIS_NSGAIII):
             return_message, request = IOPISControlGet(method)
@@ -309,9 +310,8 @@ class MethodControl(Resource):
         # TODO: use a Mutable column
         method = deepcopy(method_query.method_pickle)
 
-        if isinstance(
-            method, RVEA
-        ):  # EA methods (RVEA for now) require that a preference type is chosen.
+        if type(method).__name__ == RVEA.__name__:
+        # EA methods (RVEA for now) require that a preference type is chosen.
             """if data["preference_type"] < -1:
                 # preference type not specified
                 return {
@@ -337,7 +337,7 @@ class MethodControl(Resource):
 
         try:
             if (
-                isinstance(method, NautilusNavigator)
+                (type(method).__name__ == NautilusNavigator.__name__)
                 and user_response["go_to_previous"]
             ):
                 # for navigation methods, we need to copy the whole response as the contents of the request when going back
@@ -359,9 +359,9 @@ class MethodControl(Resource):
                 )
             preference_type = data["preference_type"]
 
-            if isinstance(method, RVEA):  # and probably other EAs as well
+            if type(method).__name__ == RVEA.__name__: # and probably other EAs as well
                 print(user_response)
-                if isinstance(method.population.problem, IOPISProblem):
+                if type(method.population.problem).__name__ == IOPISProblem.__name__:
                     if user_response["stage"] == "archive":
                         selected_solns = method.population.objectives[
                             user_response["indices"]
@@ -385,7 +385,7 @@ class MethodControl(Resource):
                 last_request = EAControlPost(
                     preference_type, last_request, user_response
                 )
-            elif isinstance(method, IOPIS_NSGAIII):
+            elif type(method).__name__ == IOPIS_NSGAIII.__name__:
                 last_request = IOPISControlPost(last_request, user_response)
             else:
                 last_request.response = user_response
@@ -418,9 +418,7 @@ class MethodControl(Resource):
 
         # we dump the response first so that we can have it encoded into valid JSON using a custom encoder
         # ignore_nan=True will ensure np.nan is coverted to valid JSON value 'null'.
-        if isinstance(
-            method, (RVEA, IOPIS_NSGAIII)
-        ):  # EA methods handle a bit differently, multiple requests to be handled
+        if type(method).__name__ in [RVEA.__name__, IOPIS_NSGAIII.__name__]: # EA methods handle a bit differently, multiple requests to be handled
             """contents = [
                 json.dumps(r.content, cls=NumpyEncoder, ignore_nan=True)
                 for r in new_request
@@ -463,10 +461,12 @@ class MethodControl(Resource):
 
 
 def EAControlGet(method):
-    if isinstance(method.population.problem, IOPISProblem):
+    if type(method.population.problem).__name__ ==  IOPISProblem.__name__:
+        method.set_interaction_type('Reference point')
         request = method.start()[0]
         """contents = [json.dumps(r, cls=NumpyEncoder, ignore_nan=True) for r in request]"""
     else:
+        method.set_interaction_type('Reference point')
         request = method.start()[0]
         """contents = [
             json.dumps(r.content, cls=NumpyEncoder, ignore_nan=True) for r in request

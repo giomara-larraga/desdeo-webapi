@@ -4,16 +4,28 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restx import Api
-from flask_sqlalchemy import SQLAlchemy
+from database import db
+
+import os
 
 app = Flask(__name__)
 CORS(app)
 
 api = Api(app)
 
+db_user = os.environ.get("POSTGRES_USER")
+db_password = os.environ.get("POSTGRES_PASSWORD")
+db_host = os.environ.get("POSTGRES_HOST")
+db_port = os.environ.get("POSTGRES_PORT")
+db_name = os.environ.get("POSTGRES_DB")
+
 ACCESS_EXPIRES = timedelta(hours=2)
 app.config["PROPAGATE_EXCEPTIONS"] = True
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+app.config[
+    "SQLALCHEMY_DATABASE_URI"
+] = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "secret-key"
 app.config["JWT_SECRET_KEY"] = "jwt-secret-key"
@@ -23,11 +35,11 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 
 jwt = JWTManager(app)
 
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
+db.init_app(app)
 
 
-@app.before_first_request
-def create_tables():
+with app.app_context():
     db.create_all()
 
 
@@ -69,22 +81,24 @@ api.add_resource(method_resources.MethodCreate, "/method/create")
 api.add_resource(method_resources.MethodControl, "/method/control")
 
 # Add questionnaire endpoints
-#api.add_resource(
+# api.add_resource(
 #    questionnaire_resources.QuestionnaireAfterSolutionProcess, "/questionnaire/after"
-#)
-#api.add_resource(
+# )
+# api.add_resource(
 #    questionnaire_resources.QuestionnaireDuringSolutionProcess, "/questionnaire/during"
-#)
-#api.add_resource(
+# )
+# api.add_resource(
 #    questionnaire_resources.QuestionnaireDuringSolutionProcessFirstIteration, "/questionnaire/during/first"
-#)
-#api.add_resource(questionnaire_resources.QuestionnaireDuringSolutionProcessAfterNew, "/questionnaire/during/new")
+# )
+# api.add_resource(questionnaire_resources.QuestionnaireDuringSolutionProcessAfterNew, "/questionnaire/during/new")
 
-api.add_resource(questionnaire_resources.QuestionnaireDemographic, "/questionnaire/demographic")
+api.add_resource(
+    questionnaire_resources.QuestionnaireDemographic, "/questionnaire/demographic"
+)
 api.add_resource(questionnaire_resources.QuestionnaireInit, "/questionnaire/init")
 api.add_resource(questionnaire_resources.QuestionnaireEnd, "/questionnaire/end")
 api.add_resource(questionnaire_resources.QuestionnaireSwitch, "/questionnaire/switch")
-# 
+#
 # Add archive endpoint
 api.add_resource(solution_archive_resources.Archive, "/archive")
 api.add_resource(solution_archive_resources.GetArchive, "/getarchive")
