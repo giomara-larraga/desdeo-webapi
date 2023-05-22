@@ -76,17 +76,29 @@ def main():
         for i in range(0, len(ids)):
             groupIds = np.append(groupIds, np.ones(args["N"]) * ids[i], axis=0)
 
-        usernames.append("giomara")
+        usernames.append("giomara1")
         passwords.append("123456")
-        usernames.append("kaisa")
+        usernames.append("kaisa1")
         passwords.append("123456")
-        usernames.append("aruiz")
+        usernames.append("aruiz1")
         passwords.append("123456")
-        usernames.append("fruiz")
+        usernames.append("fruiz1")
         passwords.append("123456")
-        usernames.append("bsaini")
+        usernames.append("bsaini1")
         passwords.append("123456")
-        groupIds = np.append(groupIds, [2]*5).tolist()
+        groupIds = np.append(groupIds, [1] * 5).tolist()
+
+        usernames.append("giomara2")
+        passwords.append("123456")
+        usernames.append("kaisa2")
+        passwords.append("123456")
+        usernames.append("aruiz2")
+        passwords.append("123456")
+        usernames.append("fruiz2")
+        passwords.append("123456")
+        usernames.append("bsaini2")
+        passwords.append("123456")
+        groupIds = np.append(groupIds, [2] * 5).tolist()
         # print(usernames)
         # print(groupIds)
 
@@ -186,14 +198,15 @@ def main():
 
         # Questions final survey (both groups)
         questions.append(create_question(10, 3, "I am now feeling tired.", "matrix", 1))
+
         questions.append(
             create_question(
-                11, 3, "I am satisfied with my final solution. ", "matrix", 1
+                11, 3, "I think that the solution I found is the best one.", "matrix", 1
             )
         )
         questions.append(
             create_question(
-                12, 3, "I think that the solution I found is the best one.", "matrix", 1
+                12, 3, "I am satisfied with my final solution. ", "matrix", 1
             )
         )
         questions.append(
@@ -214,18 +227,10 @@ def main():
                 2,
             )
         )
+
         questions.append(
             create_question(
                 15,
-                3,
-                "What did you find new or unexpected compared to what you knew or expected before starting the solution process? Please specify. ",
-                "text",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                16,
                 3,
                 "A lot of mental activity (e.g., thinking, deciding, and remembering) was required to find my final solution.",
                 "matrix",
@@ -234,7 +239,7 @@ def main():
         )
         questions.append(
             create_question(
-                17,
+                16,
                 3,
                 "The process of finding the final solution was difficult.",
                 "matrix",
@@ -243,7 +248,7 @@ def main():
         )
         questions.append(
             create_question(
-                18,
+                17,
                 3,
                 "It was easy to learn to use this decision support tool.",
                 "matrix",
@@ -252,7 +257,7 @@ def main():
         )
         questions.append(
             create_question(
-                19,
+                18,
                 3,
                 "I felt I was in control during the solution process.",
                 "matrix",
@@ -261,7 +266,7 @@ def main():
         )
         questions.append(
             create_question(
-                20,
+                19,
                 3,
                 "I felt comfortable using this decision support tool.  ",
                 "matrix",
@@ -270,19 +275,16 @@ def main():
         )
         questions.append(
             create_question(
-                21,
+                20,
                 3,
-                "I felt frustrated in the solution process (e.g., insecure, discouraged, irritated, stressed).",
-                "matrix",
-                3,
+                "What did you find new or unexpected compared to what you knew or expected before starting the solution process? Please specify. ",
+                "text",
+                2,
             )
         )
         questions.append(
-            create_question(22, 3, "Please, explain why or why not. ", "text", 3)
-        )
-        questions.append(
             create_question(
-                23,
+                21,
                 3,
                 "Overall, I am satisfied with the ease of completing this task.",
                 "matrix",
@@ -291,10 +293,28 @@ def main():
         )
         questions.append(
             create_question(
-                24,
+                22,
                 3,
                 "Overall, I am satisfied with the amount of time it took to complete this task.",
                 "matrix",
+                3,
+            )
+        )
+        questions.append(
+            create_question(
+                23,
+                3,
+                "I felt frustrated in the solution process (e.g., insecure, discouraged, irritated, stressed).",
+                "matrix",
+                3,
+            )
+        )
+        questions.append(
+            create_question(
+                24,
+                3,
+                "Please, explain why or why not you felt frustrated during the solution process. ",
+                "text",
                 3,
             )
         )
