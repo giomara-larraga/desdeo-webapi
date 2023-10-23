@@ -19,20 +19,47 @@ class QuestionnaireDemographic(Resource):
     def get(self):
         # TODO: remove try catch block and check the problems query
         try:
-            question_list = Question.query.filter_by(questionnaire_id=1).all()
+            question_list = Question.query.filter(Question.question_type != 'objective', Question.questionnaire_id == 1).all()
+            group_question_list = Question.query.filter_by(
+                questionnaire_id=1, question_type="objective"
+            ).all()
+            #question_list = Question.query.filter_by(questionnaire_id=1).all()
 
+            text_elements = [
+                {
+                    "name": str(question.id),
+                    "title": question.question_txt,
+                    "type": question.question_type,
+                    "isRequired": True,
+                }
+                for question in question_list
+            ]
+            # print(text_elements)
+
+            group_elements = [
+                {
+                    "type": "multipletext",
+                    "name": "groupelements",
+                    "title": "What objective function values do you think you can achieve as your final solution?",
+                    "isRequired": True,
+                    "items": [
+                        {
+                            "name": str(question.id),
+                            "title": question.question_txt,
+                            # "type": question.question_type,
+                            "isRequired": True,
+                        }
+                        for question in group_question_list
+                    ],
+                }
+            ]
+            text_elements.append(group_elements[0])
             response = {
-                "elements": [
-                    {
-                        "name": str(question.id),
-                        "title": question.question_txt,
-                        "type": question.question_type,
-                        "isRequired": True,
-                    }
-                    for question in question_list
-                ],
+                "elements": text_elements,
                 "showQuestionNumbers": True,
             }
+
+            response["elements"]
             for element in response["elements"]:
                 if element["title"] == "Age":
                     element["inputType"] = "number"
@@ -52,6 +79,9 @@ class QuestionnaireDemographic(Resource):
                     element["valueTrue"] = "Yes"
                     element["valueFalse"] = "No"
                     element["renderAs"] = "radio"
+                if element["type"] == "rating":
+                    element["minRateDescription"] = "Not tired"
+                    element["maxRateDescription"] = "Very tired"
             return response, 200
         except Exception as e:
             print(f"DEBUG: {e}")
@@ -99,6 +129,7 @@ class QuestionnaireInit(Resource):
                 }
             ]
             text_elements.append(group_elements[0])
+            
             # print(text_elements)
             response = {
                 "elements": text_elements,
@@ -117,10 +148,10 @@ class QuestionnaireInit(Resource):
             return {"message": "Could not fetch questions!"}, 404
 
 
-class QuestionnaireEnd(Resource):
+class QuestionnairePhase1(Resource):
     def _get_rows(self, id_page):
         question_list = Question.query.filter(
-            Question.questionnaire_id == 3,
+            Question.questionnaire_id == 2,
             Question.page == id_page,
             Question.question_type == "matrix",
         ).all()
@@ -137,13 +168,13 @@ class QuestionnaireEnd(Resource):
 
     def _get_open(self, id_page):
         count = Question.query.filter(
-            Question.questionnaire_id == 3,
+            Question.questionnaire_id == 2,
             Question.page == id_page,
             Question.question_type == "text",
         ).count()
         if count == 1:
             question = Question.query.filter(
-                Question.questionnaire_id == 3,
+                Question.questionnaire_id == 2,
                 Question.page == id_page,
                 Question.question_type == "text",
             ).first()
@@ -200,10 +231,10 @@ class QuestionnaireEnd(Resource):
             return {"message": "Could not fetch questions!"}, 404
 
 
-class QuestionnaireSwitch(Resource):
+class QuestionnairePhase2(Resource):
     def _get_rows(self, id_page):
         question_list = Question.query.filter(
-            Question.questionnaire_id == 4,
+            Question.questionnaire_id == 3,
             Question.page == id_page,
             Question.question_type == "matrix",
         ).all()
@@ -220,13 +251,13 @@ class QuestionnaireSwitch(Resource):
 
     def _get_open(self, id_page):
         count = Question.query.filter(
-            Question.questionnaire_id == 4,
+            Question.questionnaire_id == 3,
             Question.page == id_page,
             Question.question_type == "text",
         ).count()
         if count == 1:
             question = Question.query.filter(
-                Question.questionnaire_id == 4,
+                Question.questionnaire_id == 3,
                 Question.page == id_page,
                 Question.question_type == "text",
             ).first()

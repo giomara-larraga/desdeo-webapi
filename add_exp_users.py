@@ -36,6 +36,10 @@ with app.app_context():
 
 args = vars(parser.parse_args())
 
+def read_json(filename):
+    with open(filename, 'r') as file:
+        data = file.read()
+    return data
 
 def create_questionnaire(id: int, type: str, group: int):
     return {"id": id, "type": type, "group": group}
@@ -86,7 +90,9 @@ def main():
         passwords.append("123456")
         usernames.append("bsaini1")
         passwords.append("123456")
-        groupIds = np.append(groupIds, [1] * 5).tolist()
+        usernames.append("jsilvennoinen1")
+        passwords.append("123456")
+        groupIds = np.append(groupIds, [1] * 6).tolist()
 
         usernames.append("giomara2")
         passwords.append("123456")
@@ -98,6 +104,9 @@ def main():
         passwords.append("123456")
         usernames.append("bsaini2")
         passwords.append("123456")
+        usernames.append("bsaini2")
+        passwords.append("123456")
+        
         groupIds = np.append(groupIds, [2] * 5).tolist()
         # print(usernames)
         # print(groupIds)
@@ -142,328 +151,13 @@ def main():
 
         questions = []
 
-        # Questions for demographic survey
-        questions.append(create_question(1, 1, "Age", "text", 1))
-        questions.append(create_question(2, 1, "Gender", "dropdown", 1))
-        questions.append(create_question(3, 1, "Nationality", "text", 1))
-        questions.append(
-            create_question(
-                4,
-                1,
-                "Did you have any prior knowledge about these methods other than what you have learnt in this course?",
-                "Boolean",
-                1,
-            )
-        )
-
-        # Questions initial survey
-        questions.append(create_question(6, 2, "How tired are you now?", "rating", 1))
-        # questions.append(
-        #    create_question(
-        #        7,
-        #        2,
-        #        "What objective function values do you think you can achieve as your final solution?",
-        #        "text",
-        #        1,
-        #    )
-        # )
-
-        questions.append(
-            create_question(
-                7,
-                2,
-                "Social",
-                "text",
-                1,
-            )
-        )
-        questions.append(
-            create_question(
-                8,
-                2,
-                "Economic",
-                "text",
-                1,
-            )
-        )
-        questions.append(
-            create_question(
-                9,
-                2,
-                "Environmental",
-                "text",
-                1,
-            )
-        )
-
-        # Questions final survey (both groups)
-        questions.append(create_question(10, 3, "I am now feeling tired.", "matrix", 1))
-
-        questions.append(
-            create_question(
-                11, 3, "I think that the solution I found is the best one.", "matrix", 1
-            )
-        )
-        questions.append(
-            create_question(
-                12, 3, "I am satisfied with my final solution. ", "matrix", 1
-            )
-        )
-        questions.append(
-            create_question(
-                13,
-                3,
-                "Please describe why you are satisfied/disatisfied with your final solution.",
-                "text",
-                1,
-            )
-        )
-        questions.append(
-            create_question(
-                14,
-                3,
-                "Interacting with this decision support tool helped me to understand more about the tradeoffs in this problem.",
-                "matrix",
-                2,
-            )
-        )
-
-        questions.append(
-            create_question(
-                15,
-                3,
-                "A lot of mental activity (e.g., thinking, deciding, and remembering) was required to find my final solution.",
-                "matrix",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                16,
-                3,
-                "The process of finding the final solution was difficult.",
-                "matrix",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                17,
-                3,
-                "It was easy to learn to use this decision support tool.",
-                "matrix",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                18,
-                3,
-                "I felt I was in control during the solution process.",
-                "matrix",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                19,
-                3,
-                "I felt comfortable using this decision support tool.  ",
-                "matrix",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                20,
-                3,
-                "What did you find new or unexpected compared to what you knew or expected before starting the solution process? Please specify. ",
-                "text",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                21,
-                3,
-                "Overall, I am satisfied with the ease of completing this task.",
-                "matrix",
-                3,
-            )
-        )
-        questions.append(
-            create_question(
-                22,
-                3,
-                "Overall, I am satisfied with the amount of time it took to complete this task.",
-                "matrix",
-                3,
-            )
-        )
-        questions.append(
-            create_question(
-                23,
-                3,
-                "I felt frustrated in the solution process (e.g., insecure, discouraged, irritated, stressed).",
-                "matrix",
-                3,
-            )
-        )
-        questions.append(
-            create_question(
-                24,
-                3,
-                "Please, explain why or why not you felt frustrated during the solution process. ",
-                "text",
-                3,
-            )
-        )
-
-        # Questions final survey (second group)
-        questions.append(
-            create_question(
-                25,
-                4,
-                "Phase 1 enabled exploring solutions with different conflicting values of the objective functions.",
-                "matrix",
-                1,
-            )
-        )
-        questions.append(
-            create_question(
-                26,
-                4,
-                "Phase 1 enabled me to learn about the conflict degrees among the objectives.",
-                "matrix",
-                1,
-            )
-        )
-        questions.append(
-            create_question(
-                27,
-                4,
-                "Phase 1 enabled me to direct the search toward  a set of interesting solutions.",
-                "matrix",
-                1,
-            )
-        )
-        questions.append(
-            create_question(
-                28,
-                4,
-                "Phase 1 played an important role in fine-tuning the final solution.",
-                "matrix",
-                1,
-            )
-        )
-        questions.append(
-            create_question(
-                29,
-                4,
-                "Phase 1 increased my confidence in the final solution.",
-                "matrix",
-                1,
-            )
-        )
-        questions.append(
-            create_question(
-                30,
-                4,
-                "Do you have other comments about Phase 1? If so, please specify.",
-                "text",
-                1,
-            )
-        )
-        questions.append(
-            create_question(
-                31,
-                4,
-                "Phase 2 enabled exploring solutions with different conflicting values of the objective functions. ",
-                "matrix",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                32,
-                4,
-                "Phase 2 enabled me to learn about the conflict degrees among the objectives.",
-                "matrix",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                33,
-                4,
-                "Phase 2 enabled me to direct the search toward  a set of interesting solutions.",
-                "matrix",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                34,
-                4,
-                "Phase 2 played an important role in fine-tuning the final solution.",
-                "matrix",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                35,
-                4,
-                "Phase 2 increased my confidence in the final solution.",
-                "matrix",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                36,
-                4,
-                "Do you have other comments about Phase 2? If so, please specify.",
-                "text",
-                2,
-            )
-        )
-        questions.append(
-            create_question(
-                37,
-                4,
-                "Using the two phases supported me in finding the final solution.",
-                "matrix",
-                3,
-            )
-        )
-        questions.append(
-            create_question(
-                38,
-                4,
-                "The types of preference information required in the  two phases were different. Switching between these types of preference information was easy.",
-                "matrix",
-                3,
-            )
-        )
-        questions.append(
-            create_question(
-                39,
-                4,
-                "I feel that the final solution is better than the one obtained at the end of Phase 1.",
-                "matrix",
-                3,
-            )
-        )
-        questions.append(
-            create_question(
-                40,
-                4,
-                "I feel that Phase 1 made it easier to find a good solution at the end of the solution process.",
-                "matrix",
-                3,
-            )
-        )
+        questions_file = "./tests/data/questions.json"
+        data = read_json(questions_file)
+        entries = json.loads(data)
+        idx_question = 1
+        for entry in entries:
+            questions.append(create_question(idx_question, entry["questionnaire_id"], entry["question_txt"], entry["question_type"], entry["page"]))
+            idx_question = idx_question + 1
 
         try:
             for questionnaire in questionnaires:

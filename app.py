@@ -25,7 +25,7 @@ app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "secret-key"
 app.config["JWT_SECRET_KEY"] = "jwt-secret-key"
@@ -96,8 +96,8 @@ api.add_resource(
     questionnaire_resources.QuestionnaireDemographic, "/questionnaire/demographic"
 )
 api.add_resource(questionnaire_resources.QuestionnaireInit, "/questionnaire/init")
-api.add_resource(questionnaire_resources.QuestionnaireEnd, "/questionnaire/end")
-api.add_resource(questionnaire_resources.QuestionnaireSwitch, "/questionnaire/switch")
+api.add_resource(questionnaire_resources.QuestionnairePhase1, "/questionnaire/phase1")
+api.add_resource(questionnaire_resources.QuestionnairePhase2, "/questionnaire/phase2")
 #
 # Add archive endpoint
 api.add_resource(solution_archive_resources.Archive, "/archive")
