@@ -173,17 +173,17 @@ class QuestionnairePhase1(Resource):
             Question.page == id_page,
             Question.question_type == "text",
         ).count()
-        if count >= 1:
-            question = Question.query.filter(
+        question = Question.query.filter(
                 Question.questionnaire_id == 2,
                 Question.page == id_page,
                 Question.question_type == "text",
-            ).first()
-            for i in range(0, count):
+            ).all()
+        if count >= 1:
+            for item in question:
                 question_r = {
-                    "name": str(question.id),
+                    "name": str(item.id),
                     "type": "text",
-                    "title": question.question_txt,
+                    "title": item.question_txt,
                     "isRequired": True,
                 }
                 open_questions.append(question_r)
@@ -259,13 +259,13 @@ class QuestionnairePhase2(Resource):
             Question.page == id_page,
             Question.question_type == "text",
         ).count()
-        if count >= 1:
-            question = Question.query.filter(
+        questions = Question.query.filter(
                 Question.questionnaire_id == 3,
                 Question.page == id_page,
                 Question.question_type == "text",
-            ).first()
-            for i in range(0, count):
+            ).all()
+        if count >= 1:
+            for question in questions:
                 question_r = {
                     "name": str(question.id),
                     "type": "text",
@@ -363,13 +363,13 @@ class QuestionnaireFinal(Resource):
             Question.page == id_page,
             Question.question_type == "text",
         ).count()
-        if count >= 1:
-            question = Question.query.filter(
+        questions = Question.query.filter(
                 Question.questionnaire_id == 4,
                 Question.page == id_page,
                 Question.question_type == "text",
-            ).first()
-            for i in range(0, count):
+        ).all()
+        if count >= 1:
+            for question in questions:
                 question_r = {
                     "name": str(question.id),
                     "type": "text",
