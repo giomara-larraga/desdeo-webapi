@@ -27,25 +27,25 @@
   "questionnaire_id": 1,
   "question_txt": "How tired are you now?",
   "question_type": "rating",
-  "page": 1
+  "page": 2
  },
  {
   "questionnaire_id": 1,
   "question_txt": "Social",
   "question_type": "objective",
-  "page": 1
+  "page": 2
  },
  {
   "questionnaire_id": 1,
   "question_txt": "Economic",
   "question_type": "objective",
-  "page": 1
+  "page": 2
  },
  {
   "questionnaire_id": 1,
   "question_txt": "Environmental",
   "question_type": "objective",
-  "page": 1
+  "page": 2
  },
  {
   "questionnaire_id": 2,
@@ -62,7 +62,7 @@
  {
   "questionnaire_id": 2,
   "question_txt": "Please describe why you are satisfied\/dissatisfied with this solution",
-  "question_type": "matrix",
+  "question_type": "text",
   "page": 1
  },
  {
@@ -280,5 +280,41 @@
   "question_txt": "Do you have other comments about Phase 2? If so, please specify.",
   "question_type": "text",
   "page": 4
- }
+ },
+ {
+    "questionnaire_id": 4,
+    "question_txt": "Using the two phases supported me in finding the final solution. ",
+    "question_type": "matrix",
+    "page": 1
+   },
+   {
+    "questionnaire_id": 4,
+    "question_txt": "The types of preference information required in the two phases were different. Switching between these types of preference information was easy.",
+    "question_type": "matrix",
+    "page": 1
+   },
+   {
+    "questionnaire_id": 4,
+    "question_txt": "I feel that the final solution is better than the one obtained at the end of Phase 1. ",
+    "question_type": "matrix",
+    "page": 1
+   },
+   {
+    "questionnaire_id": 4,
+    "question_txt": "Starting with Phase 1 made it easy to find a good final solution at the end of the solution process.",
+    "question_type": "matrix",
+    "page": 1
+   },
+   {
+    "questionnaire_id": 4,
+    "question_txt": "Was Phase 2 important for you to find your final solution? Whether yes or no, please describe why.",
+    "question_type": "text",
+    "page": 1
+   },
+   {
+    "questionnaire_id": 4,
+    "question_txt": "Did you learn something new about the trade-offs of the problem in Phase 2 compared to Phase 1? Whether yes or no, please describe.",
+    "question_type": "text",
+    "page": 1
+   }
 ]

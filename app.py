@@ -95,9 +95,9 @@ api.add_resource(method_resources.MethodControl, "/method/control")
 api.add_resource(
     questionnaire_resources.QuestionnaireDemographic, "/questionnaire/demographic"
 )
-api.add_resource(questionnaire_resources.QuestionnaireInit, "/questionnaire/init")
 api.add_resource(questionnaire_resources.QuestionnairePhase1, "/questionnaire/phase1")
 api.add_resource(questionnaire_resources.QuestionnairePhase2, "/questionnaire/phase2")
+api.add_resource(questionnaire_resources.QuestionnaireFinal, "/questionnaire/final")
 #
 # Add archive endpoint
 api.add_resource(solution_archive_resources.Archive, "/archive")

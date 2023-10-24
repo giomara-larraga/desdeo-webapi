@@ -88,7 +88,7 @@ class QuestionnaireDemographic(Resource):
             return {"message": "Could not fetch questions!"}, 404
 
 
-class QuestionnaireInit(Resource):
+""" class QuestionnaireInit(Resource):
     def get(self):
         # TODO: remove try catch block and check the problems query
         try:
@@ -145,7 +145,7 @@ class QuestionnaireInit(Resource):
             return response, 200
         except Exception as e:
             print(f"DEBUG: {e}")
-            return {"message": "Could not fetch questions!"}, 404
+            return {"message": "Could not fetch questions!"}, 404 """
 
 
 class QuestionnairePhase1(Resource):
@@ -167,30 +167,32 @@ class QuestionnairePhase1(Resource):
         return response
 
     def _get_open(self, id_page):
+        open_questions= []
         count = Question.query.filter(
             Question.questionnaire_id == 2,
             Question.page == id_page,
             Question.question_type == "text",
         ).count()
-        if count == 1:
+        if count >= 1:
             question = Question.query.filter(
                 Question.questionnaire_id == 2,
                 Question.page == id_page,
                 Question.question_type == "text",
             ).first()
-            question_r = {
-                "name": str(question.id),
-                "type": "text",
-                "title": question.question_txt,
-                "isRequired": True,
-            }
-        else:
-            question_r = None
-        return question_r
+            for i in range(0, count):
+                question_r = {
+                    "name": str(question.id),
+                    "type": "text",
+                    "title": question.question_txt,
+                    "isRequired": True,
+                }
+                open_questions.append(question_r)
+            print(open_questions)
+        return open_questions
 
     def _compose_element(self, id_page):
         rows = self._get_rows(id_page)["rows"]
-        text_question = self._get_open(id_page)
+        text_questions = self._get_open(id_page)
         element = [
             {
                 "type": "matrix",
@@ -208,15 +210,16 @@ class QuestionnairePhase1(Resource):
                 "isAllRowRequired": True,
             }
         ]
-        if text_question != None:
-            element.append(text_question)
+        if text_questions != None:
+            for item in text_questions:
+                element.append(item)
 
         return element
 
     def get(self):
         # TODO: remove try catch block and check the problems query
         try:
-            num_pages = 3
+            num_pages = 4
             response = {
                 "pages": [
                     {
@@ -250,30 +253,136 @@ class QuestionnairePhase2(Resource):
         return response
 
     def _get_open(self, id_page):
+        open_questions= []
         count = Question.query.filter(
             Question.questionnaire_id == 3,
             Question.page == id_page,
             Question.question_type == "text",
         ).count()
-        if count == 1:
+        if count >= 1:
             question = Question.query.filter(
                 Question.questionnaire_id == 3,
                 Question.page == id_page,
                 Question.question_type == "text",
             ).first()
-            question_r = {
-                "name": str(question.id),
-                "type": "text",
-                "title": question.question_txt,
-                "isRequired": False,
-            }
-        else:
-            question_r = None
-        return question_r
+            for i in range(0, count):
+                question_r = {
+                    "name": str(question.id),
+                    "type": "text",
+                    "title": question.question_txt,
+                    "isRequired": True,
+                }
+                open_questions.append(question_r)
+            print(open_questions)
+        return open_questions
 
     def _compose_element(self, id_page):
         rows = self._get_rows(id_page)["rows"]
-        text_question = self._get_open(id_page)
+        text_questions = self._get_open(id_page)
+        if len(rows) > 0 :
+            element = [
+                {
+                    "type": "matrix",
+                    "name": "page" + str(id_page),
+                    "title": "Please indicate if you agree or disagree with the following statements",
+                    "columns": [
+                        {"value": 5, "text": "Strongly agree"},
+                        {"value": 4, "text": "Agree"},
+                        {"value": 3, "text": "Neither agree nor disagree"},
+                        {"value": 2, "text": "Disagree"},
+                        {"value": 1, "text": "Strongly disagree"},
+                    ],
+                    "rows": rows,
+                    "alternateRows": True,
+                    "isAllRowRequired": True,
+                }
+            ]
+            if text_questions != None:
+                for item in text_questions:
+                    element.append(item)
+        else:
+            question_list = Question.query.filter( Question.questionnaire_id == 3, Question.page == id_page).all()
+            element = [
+                {
+                    "name": str(question.id),
+                    "title": question.question_txt,
+                    "type": question.question_type,
+                    "isRequired": True,
+                }
+                for question in question_list
+            ]
+
+            for item in element:
+                if item["type"] == "rating":
+                    item["minRateDescription"] = "Not tired"
+                    item["maxRateDescription"] = "Very tired"
+
+
+        return element
+
+    def get(self):
+        # TODO: remove try catch block and check the problems query
+        try:
+            num_pages = 4
+            response = {
+                "pages": [
+                    {
+                        "elements": self._compose_element(j + 1),
+                    }
+                    for j in range(0, num_pages)
+                ]
+            }
+            return response, 200
+        except Exception as e:
+            print(f"DEBUG: {e}")
+            return {"message": "Could not fetch questions!"}, 404
+
+
+class QuestionnaireFinal(Resource):
+    def _get_rows(self, id_page):
+        question_list = Question.query.filter(
+            Question.questionnaire_id == 4,
+            Question.page == id_page,
+            Question.question_type == "matrix",
+        ).all()
+        response = {
+            "rows": [
+                {
+                    "value": str(question.id),
+                    "text": question.question_txt,
+                }
+                for question in question_list
+            ],
+        }
+        return response
+
+    def _get_open(self, id_page):
+        open_questions= []
+        count = Question.query.filter(
+            Question.questionnaire_id == 4,
+            Question.page == id_page,
+            Question.question_type == "text",
+        ).count()
+        if count >= 1:
+            question = Question.query.filter(
+                Question.questionnaire_id == 4,
+                Question.page == id_page,
+                Question.question_type == "text",
+            ).first()
+            for i in range(0, count):
+                question_r = {
+                    "name": str(question.id),
+                    "type": "text",
+                    "title": question.question_txt,
+                    "isRequired": True,
+                }
+                open_questions.append(question_r)
+            print(open_questions)
+        return open_questions
+
+    def _compose_element(self, id_page):
+        rows = self._get_rows(id_page)["rows"]
+        text_questions = self._get_open(id_page)
         element = [
             {
                 "type": "matrix",
@@ -291,15 +400,16 @@ class QuestionnairePhase2(Resource):
                 "isAllRowRequired": True,
             }
         ]
-        if text_question != None:
-            element.append(text_question)
+        if text_questions != None:
+            for item in text_questions:
+                element.append(item)
 
         return element
 
     def get(self):
         # TODO: remove try catch block and check the problems query
         try:
-            num_pages = 3
+            num_pages = 1
             response = {
                 "pages": [
                     {
@@ -312,7 +422,6 @@ class QuestionnairePhase2(Resource):
         except Exception as e:
             print(f"DEBUG: {e}")
             return {"message": "Could not fetch questions!"}, 404
-
 
 class AnswerQuestionnaire(Resource):
     @jwt_required()
